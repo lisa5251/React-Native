@@ -8,6 +8,7 @@ import ListScreen from "./screens/ListScreen";
 import StudentScreen from "./screens/StudentScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import BoxScreen from "./screens/BoxScreen";
+import PostsScreen from "./screens/PostsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,7 @@ export default function App() {
 
     //    <StatusBar style="auto" />
     //  </NavigationContainer>
-   <BoxScreen/>
-  );
+  //  <BoxScreen/>
+    <PostsScreen></PostsScreen>
+);
 }
