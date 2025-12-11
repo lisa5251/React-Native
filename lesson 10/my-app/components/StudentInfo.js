@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
-
 const StudentInfo = ({ fullname, position, description, profileImage }) => {
   return (
     <View style={styles.container}>
@@ -11,15 +10,13 @@ const StudentInfo = ({ fullname, position, description, profileImage }) => {
         resizeMode="cover"
       />
 
-
       <View style={styles.card}>
         <Text style={styles.name}>{fullname}</Text>
         <Text style={styles.position}>{position}</Text>
         <Text style={styles.description}>{description}</Text>
 
-
         <TouchableOpacity style={styles.button} activeOpacity={0.9}>
-          <Text style={styles.buttonText}>Contact Him</Text>
+          <Text style={styles.buttonText}>HIRE HIM</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -77,6 +74,5 @@ const styles = StyleSheet.create({
     color: "#222",
   },
 });
-
 
 export default StudentInfo;

@@ -1,10 +1,16 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Button } from "react-native";
 
 export default function MainScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text>Home screen</Text>
+      <Button
+        title="Go to List Screen"
+        onPress={() => navigation.navigate("List")}
+      />
+     
     </View>
+
   );
 }
 

@@ -1,43 +1,51 @@
 import React from "react";
-import { View, StyleSheet, Text, Image } from "react-native-web";
+import { View, Text, Image, StyleSheet } from "react-native";
 
-const StudentDetail = ({ image, name }) => {
+const StudentDetails = ({ image ,name, description }) => {
   return (
-    <View style={styles.card}>
-      <Image source={image} style={styles.image} />
+    <View style={styles.container}>
+      <View style={styles.cardWrapper}>
+        <View style={styles.imgWrapper}>
+          <Image source={image} style={styles.img} />
+        </View>
 
-      <Text style={styles.name}>{name}</Text>
+        <View style={styles.infoWrapper}>
+          <Text style={styles.name}>{name}</Text>
+          <Text>{description}</Text>
+        </View>
+      </View>
     </View>
   );
 };
 
+export default StudentDetails;
+
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#fff",
-    padding: 15,
-    margin: 15,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 6,
-    elevation: 5, // Android + Web shadow
+  container: {
+    marginBottom: 15,
     alignItems: "center",
   },
-
-  image: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 15,
-    objectFit: "cover",
+  cardWrapper: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: 8,
+    width: "90%",
   },
-
+  imgWrapper: {
+    overflow: "hidden",
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+  },
+  img: {
+    width: 100,
+    height: 100,
+  },
+  infoWrapper: {
+    marginLeft: 20,
+    marginTop: 20,
+  },
   name: {
-    fontSize: 20,
-    fontWeight: "600",
-    textAlign: "center",
+    fontWeight: "bold",
+    marginBottom: 4,
   },
 });
-
-export default StudentDetail;
