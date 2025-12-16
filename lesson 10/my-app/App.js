@@ -1,5 +1,6 @@
 // App.js
 import { StatusBar } from "expo-status-bar";
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -8,27 +9,15 @@ import ListScreen from "./screens/ListScreen";
 import StudentScreen from "./screens/StudentScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import BoxScreen from "./screens/BoxScreen";
-import PostsScreen from "./screens/PostsScreen";
+import UsersScreen from "./screens/UsersScreen";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    //    <NavigationContainer>
-    //      <Stack.Navigator
-    //      initialRouteName="Main"
-    //      screenOptions={{
-    //         title: "My App",
-    //      }}
-    //     >
-    //      //  <Stack.Screen name="Main" component={MainScreen} />
-    //       <Stack.Screen name="List" component={ListScreen} />
-
-    //      </Stack.Navigator>
-
-    //    <StatusBar style="auto" />
-    //  </NavigationContainer>
-  //  <BoxScreen/>
-    <PostsScreen></PostsScreen>
-);
+    <>
+      <UsersScreen />
+      <StatusBar style="auto" />
+    </>
+  );
 }
