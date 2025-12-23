@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Nike Hyperchase",
+    "category": "shoes",
+    "price": "$125",
+    "stock": "Yes",
+    "image": "https://i.imgur.com/2nCt3Sbl.jpg",
+    "description": "Lightweight basketball shoes with breathable upper."
+  },
+  {
+    "id": 2,
+    "name": "Air Runner",
+    "category": "shoes",
+    "price": "$99",
+    "stock": "Yes",
+    "image": "https://i.imgur.com/8Km9tLL.jpg",
+    "description": "Everyday running shoes with responsive foam."
+  },
+  {
+    "id": 3,
+    "name": "Classic Hoodie",
+    "category": "clothing",
+    "price": "$45",
+    "stock": "Yes",
+    "image": "https://i.imgur.com/7b1Rk8Ql.jpg",
+    "description": "Comfortable cotton hoodie."
+  },
+  {
+    "id": 4,
+    "name": "Smartphone X",
+    "category": "phone",
+    "price": "$400",
+    "stock": "Yes",
+    "image": "https://i.imgur.com/5tj6S7Ol.jpg",
+    "description": "High performance smartphone."
+  },
+  {
+    "id": 5,
+    "name": "Sports Cap",
+    "category": "accessories",
+    "price": "$20",
+    "stock": "Yes",
+    "image": "https://i.imgur.com/6Iej2c3l.jpg",
+    "description": "Adjustable lightweight cap."
+  },
+  {
+    "id": 6,
+    "name": "Trail Boots",
+    "category": "shoes",
+    "price": "$140",
+    "stock": "No",
+    "image": "https://i.imgur.com/3Uo0QwMl.jpg",
+    "description": "Durable boots for rough terrain."
+  },
+  {
+    "id": 7,
+    "name": "Wireless Earbuds",
+    "category": "electronics",
+    "price": "$79",
+    "stock": "Yes",
+    "image": "https://i.imgur.com/qpr5LR2l.jpg",
+    "description": "Noise-cancelling true wireless earbuds."
+  },
+  {
+    "id": 8,
+    "name": "Fitness Watch",
+    "category": "electronics",
+    "price": "$199",
+    "stock": "Yes",
+    "image": "https://i.imgur.com/NDK0Y2Rl.jpg",
+    "description": "Heart-rate tracking fitness watch."
+  }
+]

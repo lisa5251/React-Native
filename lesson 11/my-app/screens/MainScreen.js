@@ -8,9 +8,11 @@ export default function MainScreen({ navigation }) {
         title="Go to List Screen"
         onPress={() => navigation.navigate("List")}
       />
-     
+      <Button
+        title="Go to Countries Screen"
+        onPress={() => navigation.navigate("Countries")}
+      />
     </View>
-
   );
 }
 

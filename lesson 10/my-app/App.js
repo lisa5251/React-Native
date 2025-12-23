@@ -10,13 +10,14 @@ import StudentScreen from "./screens/StudentScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import BoxScreen from "./screens/BoxScreen";
 import UsersScreen from "./screens/UsersScreen";
+import ProductScreen from "./src/screens/ProductScreen";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <>
-      <UsersScreen />
+      <ProductScreen />
       <StatusBar style="auto" />
     </>
   );
