@@ -1,0 +1,51 @@
+[
+    {
+        "id" : 1,
+        "name" : "Prishtina",
+        "countryCode" : "Kosovo",
+        "population" : 258163,
+        "description" : "Kryeqyteti i Kosoves."
+    },
+      {
+        "id" : 2,
+        "name" : "Peja",
+        "countryCode" : "Kosovo",
+        "population" : 258163,
+        "description" : "qyteti ma i bukur."
+    },
+      {
+        "id" : 3,
+        "name" : "Mlisheva",
+        "countryCode" : "Kosovo",
+        "population" : 258163,
+        "description" : "Somethinggg."
+    },
+      {
+        "id" : 4,
+        "name" : "Prizreni",
+        "countryCode" : "Kosovo",
+        "population" : 258163,
+        "description" : "Kryeqyteti i Kosoves."
+    },
+      {
+        "id" : 5,
+        "name" : "Gjakova",
+        "countryCode" : "Kosovo",
+        "population" : 258163,
+        "description" : "Kryeqyteti i Kosoves."
+    },
+    {
+            "id" : 6,
+            "name" : "Drenica",
+            "countryCode" : "Kosovo",
+            "population" : 258163,
+            "description" : "Kryeqyteti i Kosoves."
+    },
+    {
+        "id" : 7,
+        "name" : "Ferizaj",
+        "countryCode" : "Kosovo",
+        "population" : 258163,
+        "description" : "Kryeqyteti i Kosoves."
+    }
+]
