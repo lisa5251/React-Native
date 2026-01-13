@@ -10,14 +10,25 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 // import BoxScreen from "./screens/BoxScreen";
 // import PostsScreen from "./screens/PostsScreen";
 import CountriesScreen from "./screens/CountriesScreen";
-import Products from "./screens/Products";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <>
-      <Products />
-    </>
+    // <NavigationContainer>
+    //   <Stack.Navigator
+    //     initialRouteName="Main"
+    //     screenOptions={{
+    //       title: "My App",
+    //     }}
+    //   >
+    //     <Stack.Screen name="Main" component={MainScreen} />
+    //     <Stack.Screen name="List" component={PostsScreen} />
+    //     <Stack.Screen name="Countries" component={CountriesScreen} />
+    //   </Stack.Navigator>
+
+    //   <StatusBar style="auto" />
+    // </NavigationContainer>
+    <CountriesScreen></CountriesScreen>
   );
 }
