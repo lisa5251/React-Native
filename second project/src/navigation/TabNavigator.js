@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { MainStackNavigator, AboutStackNavigator } from "./StackNavigator";
+import { MainStackNavigator, AboutStackNavigator, ProfileStackNavigator, SettingsStackNavigator } from "./StackNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -45,6 +45,36 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="video-stabilization"
+              color={color}
+              size={size ?? 26}
+            />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Profile"
+        component={ProfileStackNavigator}
+        options={{
+          tabBarLabel: "Profile",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="account"
+              color={color}
+              size={size ?? 26}
+            />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Settings"
+        component={SettingsStackNavigator}
+        options={{
+          tabBarLabel: "Settings",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="cog"
               color={color}
               size={size ?? 26}
             />

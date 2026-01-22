@@ -2,23 +2,17 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-const Home = () => {
+const Settings = () => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to Home Screen</Text>
+      <Text style={styles.text}>Welcome to Settings Screen</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("About")}
+        onPress={() => navigation.goBack()}
       >
-        <Text style={styles.buttonText}>GO TO ABOUT SCREEN</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.openDrawer()}
-      >
-        <Text style={styles.buttonText}>Open Drawer</Text>
+        <Text style={styles.buttonText}>GO BACK</Text>
       </TouchableOpacity>
     </View>
   );
@@ -48,4 +42,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default Settings;
