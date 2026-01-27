@@ -1,25 +1,49 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import Swiper from "react-native-swiper";
+import { Image } from "react-native";
 
 const Home = () => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to Home Screen</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("About")}
+      <Swiper
+      style={styles.swiper}
+      showsPagination={true}
+      dotColor={"#999"}
+      activeDotColor={"#007AFF"}
+      paginationStyle={styles.pagination}
+      dotStyle={styles.dot}
+      activeDotStyle={styles.activeDot}
+      
       >
-        <Text style={styles.buttonText}>GO TO ABOUT SCREEN</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.openDrawer()}
-      >
-        <Text style={styles.buttonText}>Open Drawer</Text>
-      </TouchableOpacity>
+        <View style={styles.slide}>
+          <Image
+            source={require('../../assets/image1.avif')}
+            style={styles.slideImage}
+            resizeMode="contain"
+          />
+        </View>
+
+        <View style={styles.slide}>
+          <Image
+            source={require('../../assets/image2.jpg')}
+            style={styles.slideImage}
+            resizeMode="contain"
+          />
+        </View>
+
+        <View style={styles.slide}>
+          <Image
+            source={require('../../assets/image3.png')}
+            style={styles.slideImage}
+            resizeMode="contain"
+          />
+        </View>
+
+      </Swiper>
     </View>
   );
 };
@@ -28,24 +52,41 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "stretch",
+  },
+  swiper: {
+    height: 300,
+    width: '100%',
+  },
+  slide: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#9DD6EB",
+    overflow: 'hidden',
+    borderRadius: 10,
+  },slideImage:{
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+  }
+  ,pagination: {
+    bottom: 22,
   },
-  text: {
-    fontSize: 18,
-    fontWeight: "bold",
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#bbb',
+    marginHorizontal: 3,
   },
-  button: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 5,
-    marginTop: 20,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
+  activeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#007AFF',
+    marginHorizontal: 3,
+  }
 });
 
 export default Home;
