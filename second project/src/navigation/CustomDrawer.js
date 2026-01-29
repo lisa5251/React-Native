@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    backgroundColor: "#FF6347",
+    backgroundColor: "#796bacff",
     alignItems: "center",
   },
   headerText: {
