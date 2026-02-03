@@ -5,12 +5,25 @@ import Swiper from "react-native-swiper";
 import { Image } from "react-native";
 import Icon from "../components/icons";
 
+
+import Items from "../components/items";
+import itemData from "../data/data.json";
+
 const Home = () => {
+  
   const navigation = useNavigation();
+  const [products, setProducts] = React.useState([]);
+
+  useEffect(() => {
+    setProducts(itemData.popularprofucts);
+  }, []);
+
 
   return (
-    <View style={styles.container}>
-      <Swiper
+    <FlatList
+    ListHeaderComponent={
+      <>
+            <Swiper
       style={styles.swiper}
       showsPagination={true}
       dotColor={"#999"}
@@ -51,6 +64,8 @@ const Home = () => {
         </View>
 
       </Swiper>
+      
+      
       <View style={styles.IconsContainer}>
         <Icon name="cellphone-iphone" iconText="Phone" />
         <Icon name="android" iconText="Samsung" />
@@ -62,7 +77,14 @@ const Home = () => {
         <Icon name="mouse" iconText="Mouse" />
         <Icon name="keyboard-outline" iconText="Printer" />
       </View>
-    </View>
+      </>
+    } data={products}
+    keyExtractor={(item) => item.id.toString()}
+    renderItem={({item}) => <Items item={item} />}
+    contentContainerStyle={styles.container}
+    >
+    
+    </FlatList>
   );
 };
 
