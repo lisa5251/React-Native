@@ -51,7 +51,20 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
-
+      <Tab.Screen
+        name="Ios"
+        component={IosStackNavigator}
+        options={{
+          tabBarLabel: "Ios",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="apple"
+              color={color}
+              size={size ?? 26}
+            />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Profile"
         component={ProfileStackNavigator}

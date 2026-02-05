@@ -49,5 +49,9 @@ const DrawerNavigator = () => {
             />
         </Drawer.Navigator>
     );
+};
+
+export default DrawerNavigator;
+    );
 }
 export default DrawerNavigator;
