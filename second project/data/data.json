@@ -50,5 +50,23 @@
       "image": "https://images.unsplash.com/photo-1570963904764-fff96652bbd",
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, quis nostrud exercitation."
     }
+  ],
+  "android": [
+    {
+      "id": 1,
+      "name": "Xiaomi",
+      "category": "Android",
+      "price": "$990",
+      "image": "https://images.unsplash.com/photo-1575715715369-38aa1227786a",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, quis nostrud exercitation."
+    },
+    {
+      "id": 2,
+      "name": "Samsung S21",
+      "category": "Android",
+      "price": "$990",
+      "image": "https://images.unsplash.com/photo-1610945264803-c22b62d2a7b3",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, quis nostrud exercitation."
+    }
   ]
 }

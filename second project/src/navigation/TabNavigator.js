@@ -23,6 +23,21 @@ const BottomTabNavigator = () => {
       }}
     >
       <Tab.Screen
+        name="Android"
+        component={AndroidStackNavigator}
+        options={{
+          tabBarLabel: "Android",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="android"
+              color={color}
+              size={size ?? 26}
+            />
+          ),
+        }}
+      />
+
+      <Tab.Screen
         name="Home"
         component={MainStackNavigator}
         options={{
@@ -36,7 +51,6 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
-
       <Tab.Screen
         name="About"
         component={AboutStackNavigator}
