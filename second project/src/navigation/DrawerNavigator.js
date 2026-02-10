@@ -52,6 +52,3 @@ const DrawerNavigator = () => {
 };
 
 export default DrawerNavigator;
-    );
-}
-export default DrawerNavigator;

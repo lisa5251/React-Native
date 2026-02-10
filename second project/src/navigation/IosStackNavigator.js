@@ -20,3 +20,4 @@ const IosStackNavigator = () => {
         </Stack.Navigator>
     );
 }
+export default IosStackNavigator;

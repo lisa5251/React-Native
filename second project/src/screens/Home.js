@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Swiper from "react-native-swiper";
 import { Image } from "react-native";
@@ -7,7 +7,7 @@ import Icon from "../components/icons";
 
 
 import Items from "../components/items";
-import itemData from "../data/data.json";
+import itemData from "../../data/data.json";
 
 const Home = () => {
   
@@ -15,7 +15,7 @@ const Home = () => {
   const [products, setProducts] = React.useState([]);
 
   useEffect(() => {
-    setProducts(itemData.popularprofucts);
+    setProducts(itemData.popularproducts);
   }, []);
 
 
@@ -126,10 +126,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: 'transparent',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.18,
-    shadowRadius: 8,
+    boxShadow: '0px 6px 8px rgba(0, 0, 0, 0.18)',
     elevation: 6,
     alignItems: 'center',
     justifyContent: 'center',

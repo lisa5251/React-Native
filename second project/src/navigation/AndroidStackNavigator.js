@@ -5,7 +5,7 @@ import Android from "../screens/Android";
 
 const Stack = createNativeStackNavigator();
 
-const IosStackNavigator = () => {
+const AboutStackNavigator = () => {
     return(
         <Stack.Navigator>
             <Stack.Screen 
@@ -22,4 +22,4 @@ const IosStackNavigator = () => {
     );
 };
 
-export default AndroidStackNavigator;
+export default AboutStackNavigator;

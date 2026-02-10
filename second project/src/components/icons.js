@@ -1,44 +1,41 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Icon = (props) => {
     return (
-        <View style={styles.iconContainer}>
+        <TouchableOpacity style={styles.iconContainer}>
             <View style={styles.iconWrapper}>
-                <MaterialCommunityIcons name={props.name} size={27} color="#00bcd4" />
+                <MaterialCommunityIcons name={props.name} size={32} color="#fff" />
             </View>
             <Text style={styles.iconText}>{props.iconText || ''}</Text>
-        </View>
+        </TouchableOpacity>
     );
 }
 
 const  styles = StyleSheet.create({
     iconWrapper: {
-        backgroundColor: "#796bacff",
-        width: 56,
-        height: 56,
+        backgroundColor: "#00a8e8",
+        width: 64,
+        height: 64,
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 28,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.12,
-        shadowRadius: 4,
-        elevation: 2,
+        borderRadius: 32,
+        boxShadow: '0px 4px 12px rgba(0, 168, 232, 0.3)',
+        elevation: 5,
     },
     iconContainer: {
         alignItems: "center",
         width: 80,
-        height: 100,
         justifyContent: 'center'
     },
     iconText: {
         height: 20,
-        marginTop: 6,
-        fontWeight: "600",
-        color: "#333",
-        textAlign: 'center'
+        marginTop: 10,
+        fontWeight: "700",
+        color: "#1a1a1a",
+        textAlign: 'center',
+        fontSize: 12
     }
 
 }) ;

@@ -68,5 +68,31 @@
       "image": "https://images.unsplash.com/photo-1610945264803-c22b62d2a7b3",
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, quis nostrud exercitation."
     }
+  ],
+  "laptop": [
+    {
+      "id": 1,
+      "name": "MacBook Pro",
+      "category": "Laptop",
+      "price": "$1299",
+      "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, quis nostrud exercitation."
+    },
+    {
+      "id": 2,
+      "name": "Dell XPS 13",
+      "category": "Laptop",
+      "price": "$999",
+      "image": "https://images.unsplash.com/photo-1588872657840-790ff3bde4c0",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, quis nostrud exercitation."
+    },
+    {
+      "id": 3,
+      "name": "HP Pavilion",
+      "category": "Laptop",
+      "price": "$749",
+      "image": "https://images.unsplash.com/photo-1525538182668-19b150894292",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, quis nostrud exercitation."
+    }
   ]
 }

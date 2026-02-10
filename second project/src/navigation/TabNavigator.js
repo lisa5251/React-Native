@@ -3,6 +3,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { MainStackNavigator, AboutStackNavigator, ProfileStackNavigator, SettingsStackNavigator } from "./StackNavigator";
+import AndroidStackNavigator from "./AndroidStackNavigator";
+import IosStackNavigator from "./IosStackNavigator";
+import LaptopStackNavigator from "./LaptopStackNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -11,14 +14,21 @@ const BottomTabNavigator = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "white",
-        tabBarInactiveTintColor: "lightgray",
+        tabBarActiveTintColor: "#00a8e8",
+        tabBarInactiveTintColor: "#999",
         tabBarShowLabel: true,
         tabBarStyle: {
-          backgroundColor: "#796bacff",
+          backgroundColor: "#fff",
+          borderTopWidth: 1,
+          borderTopColor: "#e0e0e0",
+          paddingBottom: 8,
+          paddingTop: 8,
+          height: 60
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
+          fontWeight: "600",
+          marginTop: 2
         },
       }}
     >
@@ -79,6 +89,21 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
+      <Tab.Screen
+        name="Laptop"
+        component={LaptopStackNavigator}
+        options={{
+          tabBarLabel: "Laptop",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="laptop"
+              color={color}
+              size={size ?? 26}
+            />
+          ),
+        }}
+      />
+ 
       <Tab.Screen
         name="Profile"
         component={ProfileStackNavigator}
