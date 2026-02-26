@@ -1,67 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Dimensions } from 'react-native';
-import Bird from './src/components/Bird';
-import Obstacles from './src/components/obstacles';
-
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Dimensions } from "react-native";
+import Bird from "./src/components/Bird";
+import Obstacles from "./src/components/Obstacles";
 
 export default function App() {
-
   const screenWidth = Dimensions.get("screen").width;
   const screenHeight = Dimensions.get("screen").height;
 
+  // Bird position
   const birdLeft = screenWidth / 2;
   const [birdBottom, setBirdBottom] = useState(screenHeight / 2);
 
+  // Gravity
   const gravity = 3;
   let gameTimerId;
 
-  const ObstacleWidth=60;
-  const obstacleHeight=300;
-  const gap=200;
-  const [obstacleLeft, setObstacleLeft] = useState(screenWidth);
-  const [obstacleNegHeight, setObstacleNegHeight] = useState(0);
-  let obstacleTimerId;
+  // Obstacles settings
+  const obstacleWidth = 60;
+  const obstacleHeight = 300;
+  const gap = 200;
 
-  const [obstacleLeftTwo, setObstacleLeftTwo] = useState(screenWidth + screenWidth / 2);
-  const [obstacleNegHeightTwo, setObstacleNegHeightTwo] = useState(0);
-  
-  let obstacleTimerIdTwo;
+  // First obstacle pair
+  const [obstaclesLeft, setObstaclesLeft] = useState(screenWidth);
+  const [obstaclesNegHeight, setObstaclesNegHeight] = useState(0);
+  let obstaclesTimerId;
 
-  useEffect(() => {
-    if (obstacleLeft > -ObstacleWidth) {
-      obstacleTimerId = setInterval(() => {
-        setObstacleLeft((left) => left - 5);
-      }, 30);
-    
-    return() => clearInterval(obstacleTimerId);
-    }else
-    {      
-      setObstacleLeft(screenWidth);
-      setObstacleNegHeight(-Math.random() * 100);
-      
-    }
-  }, [obstacleLeft]);
-    useEffect(() => {
-    if (obstacleLeftTwo > -ObstacleWidth) {
-      obstacleTimerIdTwo = setInterval(() => {
-        setObstacleLeftTwo((left) => left - 5);
-      }, 30);
-    
-    return() => clearInterval(obstacleTimerIdTwo);
-    }else
-    {      
-      setObstacleLeftTwo(screenWidth);
-      setObstacleNegHeightTwo(-Math.random() * 100);
-      
-    }
-  }, [obstacleLeftTwo]);
+  // Second obstacle pair
+  const [obstaclesLeftTwo, setObstaclesLeftTwo] = useState(
+    screenWidth + screenWidth / 2
+  );
+  const [obstaclesNegHeightTwo, setObstaclesNegHeightTwo] = useState(0);
+  let obstaclesTimerIdTwo;
 
-
-  
+  // Bird falling
   useEffect(() => {
     if (birdBottom > 0) {
       gameTimerId = setInterval(() => {
-        setBirdBottom((birdBottom) => birdBottom - gravity);
+        setBirdBottom((b) => b - gravity);
       }, 30);
     }
 
@@ -70,31 +45,55 @@ export default function App() {
     };
   }, [birdBottom]);
 
+  // Move first obstacle
+  useEffect(() => {
+    if (obstaclesLeft > -obstacleWidth) {
+      obstaclesTimerId = setInterval(() => {
+        setObstaclesLeft((left) => left - 5);
+      }, 30);
+
+      return () => clearInterval(obstaclesTimerId);
+    } else {
+      setObstaclesLeft(screenWidth);
+      setObstaclesNegHeight(-Math.random() * 100);
+    }
+  }, [obstaclesLeft]);
+
+  // Move second obstacle
+  useEffect(() => {
+    if (obstaclesLeftTwo > -obstacleWidth) {
+      obstaclesTimerIdTwo = setInterval(() => {
+        setObstaclesLeftTwo((left) => left - 5);
+      }, 30);
+
+      return () => clearInterval(obstaclesTimerIdTwo);
+    } else {
+      setObstaclesLeftTwo(screenWidth);
+      setObstaclesNegHeightTwo(-Math.random() * 100);
+    }
+  }, [obstaclesLeftTwo]);
+
   return (
     <View style={styles.container}>
-      <Bird 
-        birdBottom={birdBottom}
-        birdLeft={birdLeft}
-      />
+      <Bird birdBottom={birdBottom} birdLeft={birdLeft} />
+
       <Obstacles
         color={"green"}
-        ObstacleWidth={ObstacleWidth}
+        obstacleWidth={obstacleWidth}
         obstacleHeight={obstacleHeight}
-        randomBottom={obstacleNegHeight}
+        randomBottom={obstaclesNegHeight}
         gap={gap}
-        obstacleLeft={obstacleLeft}>
+        obstaclesLeft={obstaclesLeft}
+      />
 
-      </Obstacles>
       <Obstacles
         color={"yellow"}
-        ObstacleWidth={ObstacleWidth}
+        obstacleWidth={obstacleWidth}
         obstacleHeight={obstacleHeight}
-        randomBottom={obstacleNegHeightTwo}
+        randomBottom={obstaclesNegHeightTwo}
         gap={gap}
-        obstacleLeft={obstacleLeftTwo}>
-
-      </Obstacles>
-      
+        obstaclesLeft={obstaclesLeftTwo}
+      />
     </View>
   );
 }
@@ -102,6 +101,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
 });
