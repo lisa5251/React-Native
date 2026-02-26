@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions, TouchableWithoutFeedback,Text } from "react-native";
 import Bird from "./src/components/Bird";
 import Obstacles from "./src/components/Obstacles";
 
@@ -32,6 +32,22 @@ export default function App() {
   const [obstaclesNegHeightTwo, setObstaclesNegHeightTwo] = useState(0);
   let obstaclesTimerIdTwo;
 
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+
+  const gameOver = () => {
+    setIsGameOver(true);
+    clearInterval(gameTimerId);
+    clearInterval(obstaclesTimerId);
+    clearInterval(obstaclesTimerIdTwo);
+  }
+
+  const jump = () => {
+    if (!isGameOver && (birdBottom < screenHeight)) {
+      setBirdBottom((b) => b + 50);
+    }
+  }
+
   // Bird falling
   useEffect(() => {
     if (birdBottom > 0) {
@@ -54,6 +70,7 @@ export default function App() {
 
       return () => clearInterval(obstaclesTimerId);
     } else {
+      setScore((s) => s + 1);
       setObstaclesLeft(screenWidth);
       setObstaclesNegHeight(-Math.random() * 100);
     }
@@ -68,13 +85,42 @@ export default function App() {
 
       return () => clearInterval(obstaclesTimerIdTwo);
     } else {
+      setScore((s) => s + 1);
       setObstaclesLeftTwo(screenWidth);
       setObstaclesNegHeightTwo(-Math.random() * 100);
     }
   }, [obstaclesLeftTwo]);
 
+  useEffect(() => {
+    if (
+      (
+      birdBottom < obstaclesNegHeight + obstacleHeight + 30 ||
+      birdBottom > obstaclesNegHeight + obstacleHeight + gap - 30
+       &&
+      obstaclesLeft > screenWidth / 2 - 30 &&
+      obstaclesLeft < screenWidth / 2 + 30
+    )  || (
+      (
+      birdBottom < obstaclesNegHeight + obstacleHeight + 30 ||
+      birdBottom > obstaclesNegHeight + obstacleHeight + gap - 30
+       &&
+      obstaclesLeftTwo > screenWidth / 2 - 30 &&
+      obstaclesLeftTwo < screenWidth / 2 + 30
+    )
+    
+    
+    )
+  
+  ){
+      gameOver();
+    }
+    
+  },[birdBottom, obstaclesLeft, obstaclesNegHeight, obstaclesLeftTwo, obstaclesNegHeightTwo])
+
   return (
-    <View style={styles.container}>
+    <TouchableWithoutFeedback onPress={jump}>
+      <View style={styles.container}>
+      <Text style={styles.score}>{score}</Text>
       <Bird birdBottom={birdBottom} birdLeft={birdLeft} />
 
       <Obstacles
@@ -95,6 +141,7 @@ export default function App() {
         obstaclesLeft={obstaclesLeftTwo}
       />
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -103,4 +150,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  score:{
+    position: "absolute",
+    top: 50,
+    fontSize: 24,
+    fontWeight: "bold",
+    zIndex: 1,
+  }
 });
