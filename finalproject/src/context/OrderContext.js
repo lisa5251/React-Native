@@ -3,15 +3,24 @@ import React, { createContext, useState } from 'react';
 export const OrderContext = createContext();
 
 export const OrderProvider = ({ children }) => {
-  const [orders, setOrders] = useState([]);
-  // Example order: {
-  //   id: '1',
-  //   tableNumber: 3,
-  //   items: [{name: 'burger', price: 10}],
-  //   status: 'pending', 'accepted', 'in-kitchen', 'ready', 'served'
-  //   assignedWaiter: null,
-  //   totalPrice: 10
-  // }
+  const [orders, setOrders] = useState([
+    {
+      id: '1',
+      tableNumber: 3,
+      items: [{ name: 'Cheeseburger', price: 9.99 }],
+      status: 'pending',
+      assignedWaiter: null,
+      totalPrice: 9.99,
+    },
+  ]);
+  // Example order structure above shows the fields used by the app
+
+  // menu and cart for customer-facing screens
+  const [menu, setMenu] = useState([]);
+  const [cart, setCart] = useState([]);
+
+  const addItemToCart = item => setCart(c => [...c, item]);
+  const clearCart = () => setCart([]);
 
   const createOrder = (tableNumber, items) => {
     const newOrder = {
@@ -66,7 +75,13 @@ export const OrderProvider = ({ children }) => {
       assignOrderToWaiter,
       sendToKitchen,
       markAsReady,
-      markAsServed
+      markAsServed,
+      // customer/menu helpers
+      menu,
+      setMenu,
+      cart,
+      addItemToCart,
+      clearCart,
     }}>
       {children}
     </OrderContext.Provider>

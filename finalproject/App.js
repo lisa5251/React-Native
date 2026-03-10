@@ -1,20 +1,29 @@
+import React from 'react'; 
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+import { OrderProvider } from './src/context/OrderContext';
+import MenuScreen from './src/screens/MenuScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import WaiterOrdersScreen from './src/screens/WaiterOrdersScreen';
+import KitchenScreen from './src/screens/KitchenScreen';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <OrderProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Menu" component={MenuScreen} />
+          <Stack.Screen name="Waiter" component={WaiterOrdersScreen} />
+          <Stack.Screen name="Kitchen" component={KitchenScreen} />
+          {/* additional screens (Cart, Status, Shift, etc.) can be added later */}
+        </Stack.Navigator>
+      </NavigationContainer>
       <StatusBar style="auto" />
-    </View>
+    </OrderProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
