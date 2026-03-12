@@ -1,5 +1,4 @@
 import { registerRootComponent } from 'expo';
-import {App} from '.
-';
+import App from './App';
 
 registerRootComponent(App);
