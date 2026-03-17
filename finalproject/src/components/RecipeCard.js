@@ -1,33 +1,49 @@
-import React, { useContext } from 'react';
+﻿import React, { useContext, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { RecipesContext } from '../context/RecipesContext';
-
+import { COLORS, SPACING, RADIUS, SHADOW } from '../theme';
 
 const RecipeCard = ({ recipe, onPress }) => {
   const { favorites, toggleFavorite } = useContext(RecipesContext);
+  const [imageError, setImageError] = useState(false);
   const isFav = favorites.some((r) => r.id === recipe.id);
+  const ingredientCount = Array.isArray(recipe.ingredients) ? recipe.ingredients.length : 0;
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
-      {recipe.image && (
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
+      {recipe.image && !imageError ? (
         <View>
-          <Image source={{ uri: recipe.image }} style={styles.image} />
+          <Image
+            source={{ uri: recipe.image, cache: 'reload' }}
+            style={styles.image}
+            onError={() => setImageError(true)}
+          />
           <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.6)"]}
+            colors={['transparent', COLORS.overlay]}
             style={styles.gradientOverlay}
           />
           <TouchableOpacity
-            style={styles.favoriteButton}
+            style={[styles.favoriteButton, isFav && styles.favoriteButtonActive]}
             onPress={() => toggleFavorite(recipe)}
           >
-            <Feather name={isFav ? 'heart' : 'heart'} size={24} color={isFav ? '#ff6b6b' : '#fff'} />
+            <Feather name="heart" size={18} color={isFav ? COLORS.primary : COLORS.text} />
           </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.imagePlaceholder}>
+          <Feather name="image" size={20} color={COLORS.muted} />
+          <Text style={styles.placeholderText}>Image unavailable</Text>
         </View>
       )}
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{recipe.title}</Text>
+        <Text style={styles.title} numberOfLines={2}>{recipe.title}</Text>
+        <View style={styles.metaRow}>
+          <Text style={styles.metaText}>{ingredientCount} ingredients</Text>
+          <View style={styles.dot} />
+          <Text style={styles.metaText}>Tap for steps</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -35,43 +51,70 @@ const RecipeCard = ({ recipe, onPress }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
-    marginVertical: 8,
-    borderRadius: 12,
+    backgroundColor: COLORS.surface,
+    marginVertical: SPACING.sm,
+    borderRadius: RADIUS.md,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
+    ...SHADOW.card,
   },
   image: {
     width: '100%',
-    height: 120,
+    height: 140,
     resizeMode: 'cover',
+  },
+  imagePlaceholder: {
+    width: '100%',
+    height: 140,
+    backgroundColor: COLORS.highlight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  placeholderText: {
+    marginTop: 6,
+    fontSize: 12,
+    color: COLORS.muted,
   },
   gradientOverlay: {
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    height: 50,
+    height: 60,
   },
   favoriteButton: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    padding: 4,
+    top: SPACING.sm,
+    right: SPACING.sm,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    padding: 6,
     borderRadius: 16,
   },
+  favoriteButtonActive: {
+    backgroundColor: COLORS.highlight,
+  },
   textContainer: {
-    padding: 12,
+    padding: SPACING.md,
   },
   title: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#333',
+    color: COLORS.text,
+  },
+  metaRow: {
+    marginTop: SPACING.xs,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  metaText: {
+    fontSize: 12,
+    color: COLORS.muted,
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: COLORS.muted,
+    marginHorizontal: SPACING.sm,
   },
 });
 

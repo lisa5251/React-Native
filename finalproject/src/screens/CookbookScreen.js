@@ -1,10 +1,14 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput } from 'react-native';
+﻿import React, { useContext } from 'react';
+import { View, Text, StyleSheet, FlatList, TextInput, SafeAreaView } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import RecipeCard from '../components/RecipeCard';
 import { RecipesContext } from '../context/RecipesContext';
+import { AuthContext } from '../context/AuthContext';
+import { COLORS, SPACING, RADIUS, SHADOW } from '../theme';
 
 export default function CookbookScreen({ navigation }) {
   const { favorites } = useContext(RecipesContext);
+  const { user } = useContext(AuthContext);
   const [search, setSearch] = React.useState('');
 
   const filtered = favorites.filter((r) =>
@@ -12,29 +16,42 @@ export default function CookbookScreen({ navigation }) {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.urlInput}
-          placeholder="Paste recipe URL (TODO)"
-          value={''}
-          editable={false}
-        />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>My Cookbook</Text>
+        <Text style={styles.subtitle}>{favorites.length} saved recipes</Text>
       </View>
+
+      <View style={styles.quickAddCard}>
+        <View style={styles.quickAddIcon}>
+          <Feather name="link" size={16} color={COLORS.primary} />
+        </View>
+        <View style={styles.quickAddContent}>
+          <Text style={styles.quickAddTitle}>Add by URL</Text>
+          <Text style={styles.quickAddText}>Coming soon. Paste a recipe link to save it.</Text>
+        </View>
+      </View>
+
       <View style={styles.searchContainer}>
+        <Feather name="search" size={18} color={COLORS.muted} style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           placeholder="Search favorites..."
+          placeholderTextColor={COLORS.muted}
           value={search}
           onChangeText={setSearch}
         />
       </View>
+
       {filtered.length === 0 ? (
-        <Text style={styles.empty}>
-          {favorites.length === 0
-            ? 'No favorites yet. Add some recipes by tapping the heart icon!'
-            : 'No matching recipes.'}
-        </Text>
+        <View style={styles.emptyCard}>
+          <Text style={styles.emptyTitle}>Nothing here yet</Text>
+          <Text style={styles.emptyText}>
+            {favorites.length === 0
+              ? `Save your first recipe by tapping the heart icon, ${user?.name || 'chef'}.`
+              : 'No matching recipes. Try a different search.'}
+          </Text>
+        </View>
       ) : (
         <FlatList
           data={filtered}
@@ -48,39 +65,101 @@ export default function CookbookScreen({ navigation }) {
           contentContainerStyle={styles.list}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f0f0f0' },
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    paddingHorizontal: SPACING.lg,
+  },
+  header: {
+    paddingTop: SPACING.lg,
+    paddingBottom: SPACING.md,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: COLORS.text,
+  },
+  subtitle: {
+    marginTop: SPACING.xs,
+    fontSize: 13,
+    color: COLORS.muted,
+  },
+  quickAddCard: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    padding: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginBottom: SPACING.md,
+    ...SHADOW.card,
+  },
+  quickAddIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: COLORS.highlight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickAddContent: {
+    marginLeft: SPACING.md,
+    flex: 1,
+  },
+  quickAddTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.text,
+  },
+  quickAddText: {
+    fontSize: 12,
+    color: COLORS.muted,
+    marginTop: SPACING.xs,
+  },
   searchContainer: {
-    padding: 10,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  searchIcon: {
+    marginRight: SPACING.sm,
   },
   searchInput: {
-    backgroundColor: '#eee',
-    borderRadius: 25,
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    fontSize: 16,
+    flex: 1,
+    paddingVertical: SPACING.md,
+    fontSize: 15,
+    color: COLORS.text,
   },
-  empty: { marginTop: 50, textAlign: 'center', color: '#888', padding: 20 },
-  list: { padding: 10 },
-  inputContainer: {
-    padding: 10,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+  emptyCard: {
+    marginTop: SPACING.lg,
+    padding: SPACING.lg,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOW.card,
   },
-  urlInput: {
-    backgroundColor: '#eee',
-    borderRadius: 25,
-    paddingHorizontal: 20,
-    paddingVertical: 8,
+  emptyTitle: {
     fontSize: 16,
-    color: '#888',
+    fontWeight: '700',
+    color: COLORS.text,
+  },
+  emptyText: {
+    marginTop: SPACING.sm,
+    fontSize: 13,
+    color: COLORS.muted,
+  },
+  list: {
+    paddingTop: SPACING.lg,
+    paddingBottom: 120,
   },
 });

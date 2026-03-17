@@ -1,40 +1,69 @@
-import React, { useContext } from 'react';
+﻿import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { RecipesContext } from '../context/RecipesContext';
+import { COLORS, SPACING, RADIUS, SHADOW } from '../theme';
 
 export default function RecipeDetailScreen({ route }) {
   const { recipe } = route.params;
   const { favorites, toggleFavorite } = useContext(RecipesContext);
+  const [imageError, setImageError] = useState(false);
   const isFav = favorites.some((r) => r.id === recipe.id);
+  const ingredientCount = Array.isArray(recipe.ingredients) ? recipe.ingredients.length : 0;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {recipe.image && (
-        <View>
-          <Image source={{ uri: recipe.image }} style={styles.topImage} />
+      {recipe.image && !imageError ? (
+        <View style={styles.hero}>
+          <Image
+            source={{ uri: recipe.image, cache: 'reload' }}
+            style={styles.topImage}
+            onError={() => setImageError(true)}
+          />
           <LinearGradient
-            colors={["transparent","rgba(0,0,0,0.7)"]}
+            colors={["transparent", "rgba(0,0,0,0.7)"]}
             style={styles.titleOverlay}
           >
-            <Text style={[styles.title, styles.titleOnImage]}>{recipe.title}</Text>
+            <Text style={styles.titleOnImage}>{recipe.title}</Text>
           </LinearGradient>
           <TouchableOpacity
             style={styles.detailFavorite}
             onPress={() => toggleFavorite(recipe)}
           >
-            <Feather name="heart" size={28} color={isFav ? '#ff6b6b' : '#fff'} />
+            <Feather name="heart" size={20} color={isFav ? COLORS.primary : '#fff'} />
           </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.heroPlaceholder}>
+          <Feather name="image" size={22} color={COLORS.muted} />
+          <Text style={styles.placeholderText}>Image unavailable</Text>
         </View>
       )}
       {!recipe.image && <Text style={styles.title}>{recipe.title}</Text>}
-      <Text style={styles.sectionHeader}>Ingredients</Text>
-      {recipe.ingredients.map((ing, idx) => (
-        <Text key={idx} style={styles.listItem}>{`• ${ing}`}</Text>
-      ))}
-      <Text style={styles.sectionHeader}>Instructions</Text>
-      <Text style={styles.instructions}>{recipe.instructions}</Text>
+
+      <View style={styles.infoRow}>
+        <View style={styles.infoPill}>
+          <Feather name="list" size={14} color={COLORS.muted} />
+          <Text style={styles.infoText}>{ingredientCount} ingredients</Text>
+        </View>
+        <View style={styles.infoPill}>
+          <Feather name="heart" size={14} color={isFav ? COLORS.primary : COLORS.muted} />
+          <Text style={styles.infoText}>{isFav ? 'Saved' : 'Tap to save'}</Text>
+        </View>
+      </View>
+
+      <View style={styles.sectionCard}>
+        <Text style={styles.sectionHeader}>Ingredients</Text>
+        {recipe.ingredients.map((ing, idx) => (
+          <Text key={idx} style={styles.listItem}>{`- ${ing}`}</Text>
+        ))}
+      </View>
+
+      <View style={styles.sectionCard}>
+        <Text style={styles.sectionHeader}>Instructions</Text>
+        <Text style={styles.instructions}>{recipe.instructions}</Text>
+      </View>
     </ScrollView>
   );
 }
@@ -42,63 +71,106 @@ export default function RecipeDetailScreen({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.background,
   },
   content: {
-    padding: 20,
+    padding: SPACING.lg,
+    paddingBottom: 120,
+  },
+  hero: {
+    borderRadius: RADIUS.lg,
+    overflow: 'hidden',
+    marginBottom: SPACING.lg,
+    ...SHADOW.card,
   },
   topImage: {
     width: '100%',
-    height: 200,
+    height: 240,
     resizeMode: 'cover',
-    marginBottom: 20,
+  },
+  heroPlaceholder: {
+    height: 240,
+    borderRadius: RADIUS.lg,
+    backgroundColor: COLORS.highlight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: SPACING.lg,
+    ...SHADOW.card,
+  },
+  placeholderText: {
+    marginTop: 6,
+    color: COLORS.muted,
+    fontSize: 12,
   },
   titleOverlay: {
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    padding: 12,
-    alignItems: 'center',
+    padding: SPACING.md,
   },
   titleOnImage: {
     color: '#fff',
-    fontSize: 24,
-    marginBottom: 0,
+    fontSize: 22,
+    fontWeight: '800',
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '800',
-    marginBottom: 20,
-    color: '#333',
+    marginBottom: SPACING.md,
+    color: COLORS.text,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    marginBottom: SPACING.md,
+  },
+  infoPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    borderRadius: 999,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.xs,
+    marginRight: SPACING.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  infoText: {
+    marginLeft: SPACING.xs,
+    fontSize: 12,
+    color: COLORS.muted,
+  },
+  sectionCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOW.card,
   },
   sectionHeader: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
-    marginTop: 20,
-    marginBottom: 8,
-    color: '#555',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    paddingBottom: 4,
+    marginBottom: SPACING.sm,
+    color: COLORS.text,
   },
   listItem: {
-    fontSize: 16,
-    color: '#444',
-    marginBottom: 4,
+    fontSize: 15,
+    color: COLORS.text,
+    marginBottom: SPACING.xs,
   },
   instructions: {
-    fontSize: 16,
-    color: '#444',
+    fontSize: 15,
+    color: COLORS.text,
     lineHeight: 22,
-    marginTop: 4,
   },
   detailFavorite: {
     position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    padding: 6,
-    borderRadius: 20,
+    top: SPACING.sm,
+    right: SPACING.sm,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    padding: 8,
+    borderRadius: 18,
   },
 });

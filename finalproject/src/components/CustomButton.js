@@ -1,12 +1,13 @@
-import React from 'react';
+﻿import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { COLORS, RADIUS, SHADOW } from '../theme';
 
-const CustomButton = ({ title, onPress, color = '#4CAF50', textColor = 'white' }) => {
+const CustomButton = ({ title, onPress, color = COLORS.primary, textColor = 'white' }) => {
   return (
     <TouchableOpacity
       style={[styles.button, { backgroundColor: color }]}
       onPress={onPress}
-      activeOpacity={0.8}
+      activeOpacity={0.85}
     >
       <Text style={[styles.text, { color: textColor }]}>{title}</Text>
     </TouchableOpacity>
@@ -17,19 +18,15 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 14,
     paddingHorizontal: 20,
-    borderRadius: 12,
+    borderRadius: RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 4,
+    ...SHADOW.card,
   },
   text: {
     fontSize: 16,
     fontWeight: '600',
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
 });
 

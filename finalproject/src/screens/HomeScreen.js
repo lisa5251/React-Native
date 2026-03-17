@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+﻿import React, { useState, useEffect, useContext, useMemo } from 'react';
 import {
   View,
   Text,
@@ -7,17 +7,24 @@ import {
   TextInput,
   ActivityIndicator,
   SafeAreaView,
-  ImageBackground,
+  ScrollView,
+  TouchableOpacity,
+  Image,
 } from 'react-native';
-import RecipeCard from '../components/RecipeCard';
-import { getRecipes } from '../services/recipeService';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
+import RecipeCard from '../components/RecipeCard';
+import { getRecipes, RECIPE_CATEGORIES } from '../services/recipeService';
 import { RecipesContext } from '../context/RecipesContext';
+import { COLORS, SPACING, RADIUS } from '../theme';
+
+const CATEGORY_CHIPS = RECIPE_CATEGORIES;
 
 export default function HomeScreen({ navigation }) {
-  const { recipes, setRecipes, favorites, toggleFavorite } = useContext(RecipesContext);
+  const { recipes, setRecipes, favorites } = useContext(RecipesContext);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
     getRecipes().then((data) => {
@@ -26,118 +33,231 @@ export default function HomeScreen({ navigation }) {
     });
   }, []);
 
-  const filtered = recipes.filter((r) =>
-    r.title.toLowerCase().includes(search.toLowerCase())
+  useEffect(() => {
+    if (!recipes.length) return;
+    recipes.forEach((recipe) => {
+      if (recipe.image) {
+        Image.prefetch(recipe.image).catch(() => undefined);
+      }
+    });
+  }, [recipes]);
+
+  const filtered = useMemo(() => {
+    const bySearch = recipes.filter((r) =>
+      r.title.toLowerCase().includes(search.toLowerCase())
+    );
+
+    if (activeCategory === 'All') {
+      return bySearch;
+    }
+
+    return bySearch.filter((r) => r.category === activeCategory);
+  }, [recipes, search, activeCategory]);
+
+  const sectionLabel = activeCategory === 'All' ? 'All Recipes' : activeCategory;
+
+  const renderHeader = () => (
+    <View>
+      <LinearGradient colors={[COLORS.primary, COLORS.accent]} style={styles.hero}>
+        <Text style={styles.heroTitle}>Recipe Finder</Text>
+        <Text style={styles.heroSubtitle}>Let us find something delicious for you.</Text>
+        <View style={styles.statsRow}>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{recipes.length}</Text>
+            <Text style={styles.statLabel}>Recipes</Text>
+          </View>
+          <View style={[styles.statCard, styles.statCardSpacing]}>
+            <Text style={styles.statValue}>{favorites.length}</Text>
+            <Text style={styles.statLabel}>Saved</Text>
+          </View>
+        </View>
+      </LinearGradient>
+
+      <View style={styles.searchContainer}>
+        <Feather name="search" size={18} color={COLORS.muted} style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search recipes..."
+          placeholderTextColor={COLORS.muted}
+          value={search}
+          onChangeText={setSearch}
+        />
+      </View>
+
+      <FlatList
+        data={CATEGORY_CHIPS}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.chipRow}
+        keyExtractor={(item) => item}
+        renderItem={({ item: chip }) => {
+          const isActive = activeCategory === chip;
+          return (
+            <TouchableOpacity
+              style={[styles.chip, isActive && styles.chipActive]}
+              onPress={() => setActiveCategory(chip)}
+              activeOpacity={0.85}
+            >
+              <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{chip}</Text>
+            </TouchableOpacity>
+          );
+        }}
+        nestedScrollEnabled={false}
+      />
+
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>{sectionLabel}</Text>
+        <Text style={styles.sectionSubtitle}>{filtered.length} results</Text>
+      </View>
+    </View>
   );
 
   return (
-    <ImageBackground
-      source={{ uri: 'https://source.unsplash.com/featured/?kitchen,pattern' }}
-      style={styles.container}
-      resizeMode="cover"
-    >
-      <SafeAreaView style={styles.safeArea}>
-        <ImageBackground
-          source={{ uri: 'https://source.unsplash.com/featured/?food,background' }}
-          style={styles.headerBackground}
-          blurRadius={4}
-        >
-          <Text style={styles.headerTitle}>Recipe Finder</Text>
-        </ImageBackground>
-
-        <View style={styles.infoBanner}>
-          <Text style={styles.infoText}>Tap the heart to add to your cookbook!</Text>
-        </View>
-
-        <View style={styles.searchContainer}>
-          <Feather name="search" size={20} color="#888" style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search recipes..."
-            value={search}
-            onChangeText={setSearch}
-          />
-        </View>
-
-        {loading ? (
-          <ActivityIndicator style={{ marginTop: 50 }} size="large" color="#ff6b6b" />
-        ) : (
-          <FlatList
-            data={filtered}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <RecipeCard
-                recipe={item}
-                onPress={() => navigation.navigate('Details', { recipe: item })}
-              />
-            )
-            contentContainerStyle={styles.listContent}
-            ListEmptyComponent={
-              <Text style={styles.emptyText}>No recipes found.</Text>
-            }
-          />
-        )}
-      </SafeAreaView>
-    </ImageBackground>
+    <SafeAreaView style={styles.safeArea}>
+      {loading ? (
+        <ActivityIndicator style={{ marginTop: 40 }} size="large" color={COLORS.primary} />
+      ) : (
+        <FlatList
+          data={filtered}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <RecipeCard
+              recipe={item}
+              onPress={() => navigation.navigate('Details', { recipe: item })}
+            />
+          )}
+          ListHeaderComponent={renderHeader}
+          contentContainerStyle={styles.listContent}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No recipes found. Try another search.</Text>
+          }
+          showsVerticalScrollIndicator={false}
+          style={styles.list}
+          keyboardShouldPersistTaps="handled"
+          nestedScrollEnabled
+          removeClippedSubviews={false}
+        />
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   safeArea: {
     flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: COLORS.background,
   },
-  infoBanner: {
-    backgroundColor: '#fff8e1',
-    padding: 8,
-    alignItems: 'center',
+  list: {
+    flex: 1,
   },
-  infoText: {
-    color: '#333',
-    fontSize: 14,
+  hero: {
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.lg,
+    borderBottomLeftRadius: RADIUS.lg,
+    borderBottomRightRadius: RADIUS.lg,
   },
-  headerBackground: {
-    width: '100%',
-    height: 120,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    color: '#fff',
+  heroTitle: {
     fontSize: 28,
     fontWeight: '800',
-    textShadowColor: 'rgba(0, 0, 0, 0.4)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+    color: '#fff',
+  },
+  heroSubtitle: {
+    marginTop: SPACING.xs,
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.9)',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    marginTop: SPACING.lg,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    padding: SPACING.md,
+    borderRadius: RADIUS.md,
+  },
+  statCardSpacing: {
+    marginLeft: SPACING.md,
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  statLabel: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.9)',
+    marginTop: SPACING.xs,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    backgroundColor: COLORS.surface,
+    marginHorizontal: SPACING.lg,
+    marginTop: -SPACING.lg,
+    paddingHorizontal: SPACING.md,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   searchIcon: {
-    marginHorizontal: 8,
+    marginRight: SPACING.sm,
   },
   searchInput: {
     flex: 1,
-    backgroundColor: '#eee',
-    borderRadius: 25,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    fontSize: 16,
+    paddingVertical: SPACING.md,
+    fontSize: 15,
+    color: COLORS.text,
+  },
+  chipRow: {
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
+  },
+  chip: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 999,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.xs,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginRight: SPACING.sm,
+  },
+  chipActive: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  chipText: {
+    fontSize: 12,
+    color: COLORS.muted,
+  },
+  chipTextActive: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+  sectionHeader: {
+    marginHorizontal: SPACING.lg,
+    marginBottom: SPACING.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.text,
+  },
+  sectionSubtitle: {
+    fontSize: 12,
+    color: COLORS.muted,
   },
   listContent: {
-    padding: 10,
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: 160,
   },
   emptyText: {
-    marginTop: 50,
+    marginTop: SPACING.lg,
     textAlign: 'center',
-    color: '#888',
+    color: COLORS.muted,
   },
 });
