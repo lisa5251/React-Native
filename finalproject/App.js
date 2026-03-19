@@ -1,5 +1,6 @@
 ﻿import React, { useContext } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -71,11 +72,15 @@ function MainTabs() {
           borderTopWidth: 0,
           paddingBottom: 6,
           paddingTop: 6,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.12,
-          shadowRadius: 12,
-          elevation: 8,
+          ...(Platform.OS === 'web'
+            ? { boxShadow: '0px 8px 12px rgba(0, 0, 0, 0.12)' }
+            : {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.12,
+                shadowRadius: 12,
+                elevation: 8,
+              }),
         },
         tabBarLabelStyle: {
           fontSize: 11,

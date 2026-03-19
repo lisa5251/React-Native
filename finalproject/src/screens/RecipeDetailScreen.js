@@ -1,5 +1,15 @@
-﻿import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import React, { useContext, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { RecipesContext } from '../context/RecipesContext';
@@ -13,7 +23,14 @@ export default function RecipeDetailScreen({ route }) {
   const ingredientCount = Array.isArray(recipe.ingredients) ? recipe.ingredients.length : 0;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={[styles.content, { flexGrow: 1 }]}
+          showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
+        >
       {recipe.image && !imageError ? (
         <View style={styles.hero}>
           <Image
@@ -65,6 +82,8 @@ export default function RecipeDetailScreen({ route }) {
         <Text style={styles.instructions}>{recipe.instructions}</Text>
       </View>
     </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -75,7 +94,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: SPACING.lg,
-    paddingBottom: 120,
+    paddingBottom: 140,
   },
   hero: {
     borderRadius: RADIUS.lg,

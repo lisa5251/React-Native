@@ -18,6 +18,7 @@ const RecipeCard = ({ recipe, onPress }) => {
           <Image
             source={{ uri: recipe.image, cache: 'reload' }}
             style={styles.image}
+            resizeMode="cover"
             onError={() => setImageError(true)}
           />
           <LinearGradient
@@ -60,7 +61,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 140,
-    resizeMode: 'cover',
   },
   imagePlaceholder: {
     width: '100%',

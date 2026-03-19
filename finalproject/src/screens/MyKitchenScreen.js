@@ -1,13 +1,15 @@
-﻿import React, { useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TextInput,
   SafeAreaView,
-  FlatList,
+  ScrollView,
   TouchableOpacity,
   Image,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { RecipesContext } from '../context/RecipesContext';
@@ -36,8 +38,8 @@ export default function MyKitchenScreen() {
     setPhotoUrl('');
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
+  const renderHeader = () => (
+    <View>
       <View style={styles.header}>
         <View>
           <Text style={styles.title}>My Kitchen</Text>
@@ -92,31 +94,42 @@ export default function MyKitchenScreen() {
         <Text style={styles.sectionTitle}>Your posts</Text>
         <Text style={styles.sectionSubtitle}>{posts.length} entries</Text>
       </View>
+    </View>
+  );
 
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>No posts yet. Share your first meal.</Text>
-        }
-        renderItem={({ item }) => (
-          <View style={styles.postCard}>
-            {item.photoUrl ? (
-              <Image source={{ uri: item.photoUrl }} style={styles.postImage} />
-            ) : null}
-            <View style={styles.postContent}>
-              <Text style={styles.postTitle}>{item.title}</Text>
-              {item.rating ? <Text style={styles.postRating}>Rating: {item.rating}/5</Text> : null}
-              {item.notes ? <Text style={styles.postNotes}>{item.notes}</Text> : null}
-              <TouchableOpacity style={styles.deleteButton} onPress={() => removePost(item.id)}>
-                <Feather name="trash" size={14} color="#C0392B" />
-                <Text style={styles.deleteText}>Delete</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      />
+  return (
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
+          {renderHeader()}
+          {posts.length === 0 ? (
+            <Text style={styles.emptyText}>No posts yet. Share your first meal.</Text>
+          ) : (
+            posts.map((item) => (
+              <View key={item.id} style={styles.postCard}>
+                {item.photoUrl ? (
+                  <Image source={{ uri: item.photoUrl }} style={styles.postImage} />
+                ) : null}
+                <View style={styles.postContent}>
+                  <Text style={styles.postTitle}>{item.title}</Text>
+                  {item.rating ? <Text style={styles.postRating}>Rating: {item.rating}/5</Text> : null}
+                  {item.notes ? <Text style={styles.postNotes}>{item.notes}</Text> : null}
+                  <TouchableOpacity style={styles.deleteButton} onPress={() => removePost(item.id)}>
+                    <Feather name="trash" size={14} color="#C0392B" />
+                    <Text style={styles.deleteText}>Delete</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -126,6 +139,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
     paddingHorizontal: SPACING.lg,
+  },
+  scrollContent: {
+    paddingBottom: 140,
   },
   header: {
     paddingTop: SPACING.lg,
@@ -216,9 +232,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: SPACING.sm,
-  },
-  listContent: {
-    paddingBottom: 120,
   },
   postCard: {
     backgroundColor: COLORS.surface,

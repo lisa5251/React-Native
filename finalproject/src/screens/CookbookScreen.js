@@ -1,5 +1,14 @@
-﻿import React, { useContext } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, SafeAreaView } from 'react-native';
+import React, { useContext } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  SafeAreaView,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import RecipeCard from '../components/RecipeCard';
 import { RecipesContext } from '../context/RecipesContext';
@@ -15,8 +24,8 @@ export default function CookbookScreen({ navigation }) {
     r.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  return (
-    <SafeAreaView style={styles.container}>
+  const renderHeader = () => (
+    <View>
       <View style={styles.header}>
         <Text style={styles.title}>My Cookbook</Text>
         <Text style={styles.subtitle}>{favorites.length} saved recipes</Text>
@@ -42,29 +51,40 @@ export default function CookbookScreen({ navigation }) {
           onChangeText={setSearch}
         />
       </View>
+    </View>
+  );
 
-      {filtered.length === 0 ? (
-        <View style={styles.emptyCard}>
-          <Text style={styles.emptyTitle}>Nothing here yet</Text>
-          <Text style={styles.emptyText}>
-            {favorites.length === 0
-              ? `Save your first recipe by tapping the heart icon, ${user?.name || 'chef'}.`
-              : 'No matching recipes. Try a different search.'}
-          </Text>
-        </View>
-      ) : (
-        <FlatList
-          data={filtered}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <RecipeCard
-              recipe={item}
-              onPress={() => navigation.navigate('Details', { recipe: item })}
-            />
+  return (
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
+          {renderHeader()}
+          {filtered.length === 0 ? (
+            <View style={styles.emptyCard}>
+              <Text style={styles.emptyTitle}>Nothing here yet</Text>
+              <Text style={styles.emptyText}>
+                {favorites.length === 0
+                  ? `Save your first recipe by tapping the heart icon, ${user?.name || 'chef'}.`
+                  : 'No matching recipes. Try a different search.'}
+              </Text>
+            </View>
+          ) : (
+            filtered.map((item) => (
+              <RecipeCard
+                key={item.id}
+                recipe={item}
+                onPress={() => navigation.navigate('Details', { recipe: item })}
+              />
+            ))
           )}
-          contentContainerStyle={styles.list}
-        />
-      )}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -74,6 +94,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
     paddingHorizontal: SPACING.lg,
+  },
+  scrollContent: {
+    paddingBottom: 140,
   },
   header: {
     paddingTop: SPACING.lg,
@@ -157,9 +180,5 @@ const styles = StyleSheet.create({
     marginTop: SPACING.sm,
     fontSize: 13,
     color: COLORS.muted,
-  },
-  list: {
-    paddingTop: SPACING.lg,
-    paddingBottom: 120,
   },
 });

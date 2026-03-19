@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,10 @@ import {
   TextInput,
   ActivityIndicator,
   SafeAreaView,
-  ScrollView,
   TouchableOpacity,
   Image,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
@@ -102,7 +103,7 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
           );
         }}
-        nestedScrollEnabled={false}
+        nestedScrollEnabled
       />
 
       <View style={styles.sectionHeader}>
@@ -112,31 +113,49 @@ export default function HomeScreen({ navigation }) {
     </View>
   );
 
+  const renderRecipeItem = ({ item }) => (
+    <RecipeCard
+      recipe={item}
+      onPress={() => navigation.navigate('Details', { recipe: item })}
+    />
+  );
+
   return (
     <SafeAreaView style={styles.safeArea}>
       {loading ? (
         <ActivityIndicator style={{ marginTop: 40 }} size="large" color={COLORS.primary} />
       ) : (
-        <FlatList
-          data={filtered}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <RecipeCard
-              recipe={item}
-              onPress={() => navigation.navigate('Details', { recipe: item })}
+        Platform.OS !== 'web' ? (
+          <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <FlatList
+              data={filtered}
+              keyExtractor={(item) => item.id}
+              renderItem={renderRecipeItem}
+              ListHeaderComponent={renderHeader}
+              ListEmptyComponent={
+                <Text style={styles.emptyText}>No recipes found. Try another search.</Text>
+              }
+              style={{ flex: 1 }}
+              contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
             />
-          )}
-          ListHeaderComponent={renderHeader}
-          contentContainerStyle={styles.listContent}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>No recipes found. Try another search.</Text>
-          }
-          showsVerticalScrollIndicator={false}
-          style={styles.list}
-          keyboardShouldPersistTaps="handled"
-          nestedScrollEnabled
-          removeClippedSubviews={false}
-        />
+          </KeyboardAvoidingView>
+        ) : (
+          <FlatList
+            data={filtered}
+            keyExtractor={(item) => item.id}
+            renderItem={renderRecipeItem}
+            ListHeaderComponent={renderHeader}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>No recipes found. Try another search.</Text>
+            }
+            style={{ flex: 1 }}
+            contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}
+            showsVerticalScrollIndicator={false}
+          />
+        )
       )}
     </SafeAreaView>
   );
@@ -147,8 +166,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  list: {
-    flex: 1,
+  scrollContent: {
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: 160,
   },
   hero: {
     paddingHorizontal: SPACING.lg,
@@ -250,10 +270,6 @@ const styles = StyleSheet.create({
   sectionSubtitle: {
     fontSize: 12,
     color: COLORS.muted,
-  },
-  listContent: {
-    paddingHorizontal: SPACING.lg,
-    paddingBottom: 160,
   },
   emptyText: {
     marginTop: SPACING.lg,

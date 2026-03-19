@@ -1,5 +1,15 @@
-﻿import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
+import React, { useContext, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 import { COLORS, SPACING, RADIUS, SHADOW } from '../theme';
 
@@ -33,59 +43,72 @@ export default function AuthScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.title}>{mode === 'login' ? 'Welcome back' : 'Create account'}</Text>
-        <Text style={styles.subtitle}>Save favorites and post what you cooked.</Text>
-
-        <View style={styles.switchRow}>
-          <TouchableOpacity
-            onPress={() => setMode('login')}
-            style={[styles.switchButton, mode === 'login' && styles.switchActive]}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            showsVerticalScrollIndicator={false}
           >
-            <Text style={[styles.switchText, mode === 'login' && styles.switchTextActive]}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setMode('register')}
-            style={[styles.switchButton, mode === 'register' && styles.switchActive]}
-          >
-            <Text style={[styles.switchText, mode === 'register' && styles.switchTextActive]}>Register</Text>
-          </TouchableOpacity>
-        </View>
+            <View style={styles.card}>
+          <Text style={styles.title}>{mode === 'login' ? 'Welcome back' : 'Create account'}</Text>
+          <Text style={styles.subtitle}>Save favorites and post what you cooked.</Text>
 
-        {mode === 'register' && (
+          <View style={styles.switchRow}>
+            <TouchableOpacity
+              onPress={() => setMode('login')}
+              style={[styles.switchButton, mode === 'login' && styles.switchActive]}
+            >
+              <Text style={[styles.switchText, mode === 'login' && styles.switchTextActive]}>Login</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setMode('register')}
+              style={[styles.switchButton, mode === 'register' && styles.switchActive]}
+            >
+              <Text style={[styles.switchText, mode === 'register' && styles.switchTextActive]}>Register</Text>
+            </TouchableOpacity>
+          </View>
+
+          {mode === 'register' && (
+            <TextInput
+              style={styles.input}
+              placeholder="Name"
+              placeholderTextColor={COLORS.muted}
+              value={name}
+              onChangeText={setName}
+            />
+          )}
+
           <TextInput
             style={styles.input}
-            placeholder="Name"
+            placeholder="Email"
             placeholderTextColor={COLORS.muted}
-            value={name}
-            onChangeText={setName}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
           />
-        )}
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor={COLORS.muted}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor={COLORS.muted}
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor={COLORS.muted}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+          {error ? <Text style={styles.error}>{error}</Text> : null}
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-
-        <TouchableOpacity style={styles.primaryButton} onPress={submit}>
-          <Text style={styles.primaryButtonText}>{mode === 'login' ? 'Login' : 'Create Account'}</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.primaryButton} onPress={submit}>
+            <Text style={styles.primaryButtonText}>{mode === 'login' ? 'Login' : 'Create Account'}</Text>
+          </TouchableOpacity>
+        </View>
+          </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -94,6 +117,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  scrollContent: {
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: SPACING.lg,
