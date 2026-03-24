@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -13,14 +13,25 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { RecipesContext } from '../context/RecipesContext';
+import RecipeIcon from '../components/RecipeIcon';
 import { COLORS, SPACING, RADIUS, SHADOW } from '../theme';
 
 export default function RecipeDetailScreen({ route }) {
   const { recipe } = route.params;
   const { favorites, toggleFavorite } = useContext(RecipesContext);
   const [imageError, setImageError] = useState(false);
+  const [fallbackError, setFallbackError] = useState(false);
   const isFav = favorites.some((r) => r.id === recipe.id);
   const ingredientCount = Array.isArray(recipe.ingredients) ? recipe.ingredients.length : 0;
+  const fallbackImage = recipe.fallbackImage;
+
+  useEffect(() => {
+    setImageError(false);
+    setFallbackError(false);
+  }, [recipe.image, recipe.fallbackImage]);
+
+  const showPrimary = recipe.image && !imageError;
+  const showFallback = !showPrimary && fallbackImage && !fallbackError;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,57 +42,84 @@ export default function RecipeDetailScreen({ route }) {
           showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
         >
-      {recipe.image && !imageError ? (
-        <View style={styles.hero}>
-          <Image
-            source={{ uri: recipe.image, cache: 'reload' }}
-            style={styles.topImage}
-            onError={() => setImageError(true)}
-          />
-          <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.7)"]}
-            style={styles.titleOverlay}
-          >
-            <Text style={styles.titleOnImage}>{recipe.title}</Text>
-          </LinearGradient>
-          <TouchableOpacity
-            style={styles.detailFavorite}
-            onPress={() => toggleFavorite(recipe)}
-          >
-            <Feather name="heart" size={20} color={isFav ? COLORS.primary : '#fff'} />
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={styles.heroPlaceholder}>
-          <Feather name="image" size={22} color={COLORS.muted} />
-          <Text style={styles.placeholderText}>Image unavailable</Text>
-        </View>
-      )}
-      {!recipe.image && <Text style={styles.title}>{recipe.title}</Text>}
+          {showPrimary ? (
+            <View style={styles.hero}>
+              <Image
+                source={{ uri: recipe.image, cache: 'reload' }}
+                style={styles.topImage}
+                onError={() => setImageError(true)}
+              />
+              <LinearGradient
+                colors={['transparent', 'rgba(0,0,0,0.7)']}
+                style={styles.titleOverlay}
+              >
+                <Text style={styles.titleOnImage}>{recipe.title}</Text>
+              </LinearGradient>
+              <TouchableOpacity
+                style={styles.detailFavorite}
+                onPress={() => toggleFavorite(recipe)}
+              >
+                <Feather name="heart" size={20} color={isFav ? COLORS.primary : '#fff'} />
+              </TouchableOpacity>
+            </View>
+          ) : showFallback ? (
+            <View style={styles.hero}>
+              <Image
+                source={{ uri: fallbackImage, cache: 'reload' }}
+                style={styles.topImage}
+                onError={() => setFallbackError(true)}
+              />
+              <LinearGradient
+                colors={['transparent', 'rgba(0,0,0,0.7)']}
+                style={styles.titleOverlay}
+              >
+                <Text style={styles.titleOnImage}>{recipe.title}</Text>
+              </LinearGradient>
+              <TouchableOpacity
+                style={styles.detailFavorite}
+                onPress={() => toggleFavorite(recipe)}
+              >
+                <Feather name="heart" size={20} color={isFav ? COLORS.primary : '#fff'} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.hero}>
+              <LinearGradient colors={[COLORS.primary, COLORS.accent]} style={styles.heroGradient}>
+                <RecipeIcon title={recipe.title} size={88} />
+                <Text style={styles.heroTitle}>{recipe.title}</Text>
+              </LinearGradient>
+              <TouchableOpacity
+                style={styles.detailFavorite}
+                onPress={() => toggleFavorite(recipe)}
+              >
+                <Feather name="heart" size={20} color={isFav ? COLORS.primary : '#fff'} />
+              </TouchableOpacity>
+            </View>
+          )}
 
-      <View style={styles.infoRow}>
-        <View style={styles.infoPill}>
-          <Feather name="list" size={14} color={COLORS.muted} />
-          <Text style={styles.infoText}>{ingredientCount} ingredients</Text>
-        </View>
-        <View style={styles.infoPill}>
-          <Feather name="heart" size={14} color={isFav ? COLORS.primary : COLORS.muted} />
-          <Text style={styles.infoText}>{isFav ? 'Saved' : 'Tap to save'}</Text>
-        </View>
-      </View>
+          <View style={styles.infoRow}>
+            <View style={styles.infoPill}>
+              <Feather name="list" size={14} color={COLORS.muted} />
+              <Text style={styles.infoText}>{ingredientCount} ingredients</Text>
+            </View>
+            <View style={styles.infoPill}>
+              <Feather name="heart" size={14} color={isFav ? COLORS.primary : COLORS.muted} />
+              <Text style={styles.infoText}>{isFav ? 'Saved' : 'Tap to save'}</Text>
+            </View>
+          </View>
 
-      <View style={styles.sectionCard}>
-        <Text style={styles.sectionHeader}>Ingredients</Text>
-        {recipe.ingredients.map((ing, idx) => (
-          <Text key={idx} style={styles.listItem}>{`- ${ing}`}</Text>
-        ))}
-      </View>
+          <View style={styles.sectionCard}>
+            <Text style={styles.sectionHeader}>Ingredients</Text>
+            {recipe.ingredients.map((ing, idx) => (
+              <Text key={idx} style={styles.listItem}>{`- ${ing}`}</Text>
+            ))}
+          </View>
 
-      <View style={styles.sectionCard}>
-        <Text style={styles.sectionHeader}>Instructions</Text>
-        <Text style={styles.instructions}>{recipe.instructions}</Text>
-      </View>
-    </ScrollView>
+          <View style={styles.sectionCard}>
+            <Text style={styles.sectionHeader}>Instructions</Text>
+            <Text style={styles.instructions}>{recipe.instructions}</Text>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -107,20 +145,6 @@ const styles = StyleSheet.create({
     height: 240,
     resizeMode: 'cover',
   },
-  heroPlaceholder: {
-    height: 240,
-    borderRadius: RADIUS.lg,
-    backgroundColor: COLORS.highlight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: SPACING.lg,
-    ...SHADOW.card,
-  },
-  placeholderText: {
-    marginTop: 6,
-    color: COLORS.muted,
-    fontSize: 12,
-  },
   titleOverlay: {
     position: 'absolute',
     left: 0,
@@ -133,11 +157,16 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '800',
   },
-  title: {
-    fontSize: 26,
+  heroGradient: {
+    paddingVertical: SPACING.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroTitle: {
+    marginTop: SPACING.sm,
+    color: '#fff',
+    fontSize: 22,
     fontWeight: '800',
-    marginBottom: SPACING.md,
-    color: COLORS.text,
   },
   infoRow: {
     flexDirection: 'row',

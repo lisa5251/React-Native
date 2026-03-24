@@ -207,11 +207,22 @@ function buildInstructions(title, category) {
 }
 
 function buildRecipe(entry, category, id) {
+  // Prefer the explicit image tied to the recipe name; fall back to a stable tag-based image.
+  const tags = [entry.title, category, 'food']
+    .map((tag) => encodeURIComponent(tag))
+    .join(',');
+  const fallbackImage = `https://loremflickr.com/1200/800/${tags}?lock=${id}`;
+  const rawImage = typeof entry.image === 'string' ? entry.image.trim() : '';
+  const imageForRecipe = rawImage
+    ? rawImage.replace('source.unsplash.com/featured/?', 'source.unsplash.com/1200x800/?')
+    : fallbackImage;
+
   return {
     id: String(id),
     title: entry.title,
     category,
-    image: entry.image,
+    image: imageForRecipe,
+    fallbackImage,
     ingredients: buildIngredients(entry.title, category),
     instructions: buildInstructions(entry.title, category),
   };

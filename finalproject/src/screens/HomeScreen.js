@@ -7,14 +7,15 @@ import {
   TextInput,
   ActivityIndicator,
   SafeAreaView,
+  ScrollView,
   TouchableOpacity,
-  Image,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import RecipeCard from '../components/RecipeCard';
+import RecipeIcon from '../components/RecipeIcon';
 import { getRecipes, RECIPE_CATEGORIES } from '../services/recipeService';
 import { RecipesContext } from '../context/RecipesContext';
 import { COLORS, SPACING, RADIUS } from '../theme';
@@ -34,15 +35,6 @@ export default function HomeScreen({ navigation }) {
     });
   }, []);
 
-  useEffect(() => {
-    if (!recipes.length) return;
-    recipes.forEach((recipe) => {
-      if (recipe.image) {
-        Image.prefetch(recipe.image).catch(() => undefined);
-      }
-    });
-  }, [recipes]);
-
   const filtered = useMemo(() => {
     const bySearch = recipes.filter((r) =>
       r.title.toLowerCase().includes(search.toLowerCase())
@@ -55,7 +47,7 @@ export default function HomeScreen({ navigation }) {
     return bySearch.filter((r) => r.category === activeCategory);
   }, [recipes, search, activeCategory]);
 
-  const sectionLabel = activeCategory === 'All' ? 'All Recipes' : activeCategory;
+  const sectionLabel = activeCategory === 'All' ? 'All Categories' : activeCategory;
 
   const renderHeader = () => (
     <View>
@@ -93,13 +85,23 @@ export default function HomeScreen({ navigation }) {
         keyExtractor={(item) => item}
         renderItem={({ item: chip }) => {
           const isActive = activeCategory === chip;
+          const chipLabel = chip === 'All' ? 'All Categories' : chip;
+          const chipIconLabel = chip === 'All' ? 'All' : chip;
           return (
             <TouchableOpacity
               style={[styles.chip, isActive && styles.chipActive]}
               onPress={() => setActiveCategory(chip)}
               activeOpacity={0.85}
             >
-              <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{chip}</Text>
+              <RecipeIcon
+                title={chipIconLabel}
+                size={22}
+                style={styles.chipIcon}
+                textStyle={styles.chipIconText}
+              />
+              <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
+                {chipLabel}
+              </Text>
             </TouchableOpacity>
           );
         }}
@@ -113,13 +115,6 @@ export default function HomeScreen({ navigation }) {
     </View>
   );
 
-  const renderRecipeItem = ({ item }) => (
-    <RecipeCard
-      recipe={item}
-      onPress={() => navigation.navigate('Details', { recipe: item })}
-    />
-  );
-
   return (
     <SafeAreaView style={styles.safeArea}>
       {loading ? (
@@ -127,34 +122,46 @@ export default function HomeScreen({ navigation }) {
       ) : (
         Platform.OS !== 'web' ? (
           <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <FlatList
-              data={filtered}
-              keyExtractor={(item) => item.id}
-              renderItem={renderRecipeItem}
-              ListHeaderComponent={renderHeader}
-              ListEmptyComponent={
-                <Text style={styles.emptyText}>No recipes found. Try another search.</Text>
-              }
+            <ScrollView
               style={{ flex: 1 }}
               contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
               keyboardDismissMode="on-drag"
-            />
+            >
+              {renderHeader()}
+              {filtered.length === 0 ? (
+                <Text style={styles.emptyText}>No recipes found. Try another search.</Text>
+              ) : (
+                filtered.map((item) => (
+                  <RecipeCard
+                    key={item.id}
+                    recipe={item}
+                    onPress={() => navigation.navigate('Details', { recipe: item })}
+                  />
+                ))
+              )}
+            </ScrollView>
           </KeyboardAvoidingView>
         ) : (
-          <FlatList
-            data={filtered}
-            keyExtractor={(item) => item.id}
-            renderItem={renderRecipeItem}
-            ListHeaderComponent={renderHeader}
-            ListEmptyComponent={
-              <Text style={styles.emptyText}>No recipes found. Try another search.</Text>
-            }
+          <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}
             showsVerticalScrollIndicator={false}
-          />
+          >
+            {renderHeader()}
+            {filtered.length === 0 ? (
+              <Text style={styles.emptyText}>No recipes found. Try another search.</Text>
+            ) : (
+              filtered.map((item) => (
+                <RecipeCard
+                  key={item.id}
+                  recipe={item}
+                  onPress={() => navigation.navigate('Details', { recipe: item })}
+                />
+              ))
+            )}
+          </ScrollView>
         )
       )}
     </SafeAreaView>
@@ -242,6 +249,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     marginRight: SPACING.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   chipActive: {
     backgroundColor: COLORS.primary,
@@ -254,6 +263,12 @@ const styles = StyleSheet.create({
   chipTextActive: {
     color: '#fff',
     fontWeight: '600',
+  },
+  chipIcon: {
+    marginRight: SPACING.xs,
+  },
+  chipIconText: {
+    letterSpacing: 0,
   },
   sectionHeader: {
     marginHorizontal: SPACING.lg,

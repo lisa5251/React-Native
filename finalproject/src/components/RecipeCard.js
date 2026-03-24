@@ -1,43 +1,26 @@
-﻿import React, { useContext, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+﻿import React, { useContext } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { RecipesContext } from '../context/RecipesContext';
+import RecipeIcon from './RecipeIcon';
 import { COLORS, SPACING, RADIUS, SHADOW } from '../theme';
 
 const RecipeCard = ({ recipe, onPress }) => {
   const { favorites, toggleFavorite } = useContext(RecipesContext);
-  const [imageError, setImageError] = useState(false);
   const isFav = favorites.some((r) => r.id === recipe.id);
   const ingredientCount = Array.isArray(recipe.ingredients) ? recipe.ingredients.length : 0;
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
-      {recipe.image && !imageError ? (
-        <View>
-          <Image
-            source={{ uri: recipe.image, cache: 'reload' }}
-            style={styles.image}
-            resizeMode="cover"
-            onError={() => setImageError(true)}
-          />
-          <LinearGradient
-            colors={['transparent', COLORS.overlay]}
-            style={styles.gradientOverlay}
-          />
-          <TouchableOpacity
-            style={[styles.favoriteButton, isFav && styles.favoriteButtonActive]}
-            onPress={() => toggleFavorite(recipe)}
-          >
-            <Feather name="heart" size={18} color={isFav ? COLORS.primary : COLORS.text} />
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={styles.imagePlaceholder}>
-          <Feather name="image" size={20} color={COLORS.muted} />
-          <Text style={styles.placeholderText}>Image unavailable</Text>
-        </View>
-      )}
+      <View style={styles.iconHeader}>
+        <RecipeIcon title={recipe.title} size={56} />
+        <TouchableOpacity
+          style={[styles.favoriteButton, isFav && styles.favoriteButtonActive]}
+          onPress={() => toggleFavorite(recipe)}
+        >
+          <Feather name="heart" size={18} color={isFav ? COLORS.primary : COLORS.text} />
+        </TouchableOpacity>
+      </View>
       <View style={styles.textContainer}>
         <Text style={styles.title} numberOfLines={2}>{recipe.title}</Text>
         <View style={styles.metaRow}>
@@ -58,28 +41,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...SHADOW.card,
   },
-  image: {
-    width: '100%',
-    height: 140,
-  },
-  imagePlaceholder: {
-    width: '100%',
-    height: 140,
+  iconHeader: {
+    height: 120,
     backgroundColor: COLORS.highlight,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  placeholderText: {
-    marginTop: 6,
-    fontSize: 12,
-    color: COLORS.muted,
-  },
-  gradientOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 60,
   },
   favoriteButton: {
     position: 'absolute',
